@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint --fix src/ integration/",
-    "test:integration": "jest integration"
+    "test:integration": "npm run build && jest dist/integration"
   },
   "keywords": [],
   "author": "",
