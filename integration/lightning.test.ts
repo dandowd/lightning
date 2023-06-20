@@ -4,7 +4,7 @@ describe('it should read from stdin', () => {
   let sut: ReturnType<typeof spawn>
 
   beforeEach(() => {
-    sut = spawn('ts-node', ['../src/index.ts'], { cwd: __dirname })
+    sut = spawn('ts-node', ['./src/index.ts'])
   })
 
   afterEach(() => {
