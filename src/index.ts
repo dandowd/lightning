@@ -5,7 +5,7 @@ import { validateLightningStrike } from './validateLightningStrike'
 import fs from 'fs'
 import { StreamDataManager } from './streamDataManager'
 
-const dataManager = new StreamDataManager(process.stdin)
+const dataManager = new StreamDataManager()
 
 const { values: { assetsFile } } = parseArgs({
   args: process.argv,
@@ -27,11 +27,15 @@ const assets = loadAssets(assetsFile)
 
 let logDump: any[] = []
 
-const processData = (): void => {
-  const dataFrame = dataManager.flushFrame()
+process.stdin.on('data', data => {
+  dataManager.ingest(data)
 
-  while (dataFrame.length > 0) {
-    const row = dataFrame.pop()
+  processData(dataManager.flushFrame())
+})
+
+const processData = (frame: string[]): void => {
+  while (frame.length > 0) {
+    const row = frame.pop()
 
     try {
       if (row === undefined) {
@@ -68,5 +72,3 @@ const dumpLogs = (): void => {
 }
 
 setInterval(dumpLogs, 10000)
-
-setInterval(processData, 4000)
