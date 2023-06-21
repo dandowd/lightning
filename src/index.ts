@@ -1,7 +1,7 @@
 import { parseArgs } from 'node:util'
 import { getUniqueAssets } from './getUniqueAssets'
 import { loadAssets } from './loadAssets'
-import { validateLightningStrikes } from './validateLightningStrike'
+import { validateLightningStrike } from './validateLightningStrike'
 
 const { values: { assetsFile } } = parseArgs({
   args: process.argv,
@@ -21,15 +21,30 @@ if (assetsFile === undefined) {
 
 const assets = loadAssets(assetsFile)
 
+const dataToBeProcessed: string[] = []
+
 process.stdin.on('data', data => {
-  const rows = data.toString().split('\n')
-  const strikes = validateLightningStrikes(rows)
-
-  const struckAssets = getUniqueAssets(strikes, assets)
-
-  struckAssets.forEach((asset) => {
-    process.stdout.write(`lightning alert for ${asset.assetOwner}:${asset.assetName}\n`)
-  })
+  dataToBeProcessed.push(data.toString())
 }).on('error', error => {
   console.log(error)
 })
+
+const processData = (): void => {
+  while (dataToBeProcessed.length > 0) {
+    const row = dataToBeProcessed.pop()
+
+    if (row === undefined) {
+      continue
+    }
+
+    const strike = validateLightningStrike(row)
+
+    const struckAsset = getUniqueAssets(strike, assets)
+
+    if (struckAsset !== undefined) {
+      console.log(`\nlightning alert for ${struckAsset.assetOwner}:${struckAsset.assetName}\n`)
+    }
+  }
+}
+
+setInterval(processData, 4000)
