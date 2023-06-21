@@ -21,21 +21,19 @@ if (assetsFile === undefined) {
 
 const assets = loadAssets(assetsFile)
 
-let dataFrame: string[] = []
+const dataFrame: string[] = []
 
 process.stdin.on('data', data => {
-  dataFrame.push(data.toString())
+  const rows = data.toString().split('\n')
+  dataFrame.push(...rows)
 }).on('error', error => {
   console.log(error)
 })
 
 const processData = (): void => {
-  const dataToBeProcessed = dataFrame
-  dataFrame = []
-
-  while (dataToBeProcessed.length > 0) {
+  while (dataFrame.length > 0) {
     try {
-      const row = dataToBeProcessed.pop()
+      const row = dataFrame.pop()
 
       if (row === undefined) {
         continue
