@@ -2,22 +2,19 @@ import { type Asset } from './validateAssets'
 import { type Strike } from './validateLightningStrike'
 import { getQuadKey } from './mapTools'
 
-export const getUniqueAssets = (strikes: Strike[], assets: Record<string, Asset>): Asset[] => {
-  const warned = new Set()
+const warned = new Set()
 
-  return strikes.reduce((acc: Asset[], strike: Strike) => {
-    if (strike.flashType === 9) {
-      return acc
-    }
+export const getUniqueAssets = (strike: Strike, assets: Record<string, Asset>): Asset | undefined => {
+  if (strike.flashType === 9) {
+    return
+  }
 
-    const quadkey = getQuadKey({ lat: strike.latitude, lng: strike.longitude }, 12)
-    const hitAsset = assets[quadkey]
+  const quadkey = getQuadKey({ lat: strike.latitude, lng: strike.longitude }, 12)
+  const hitAsset = assets[quadkey]
 
-    if (!warned.has(quadkey) && hitAsset !== undefined) {
-      warned.add(quadkey)
-      acc.push(hitAsset)
-    }
+  if (!warned.has(quadkey) && hitAsset !== undefined) {
+    warned.add(quadkey)
 
-    return acc
-  }, [])
+    return hitAsset
+  }
 }
