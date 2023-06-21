@@ -1,7 +1,7 @@
 import Ajv, { type JSONSchemaType } from 'ajv'
 const ajv = new Ajv()
 
-interface Strike {
+export interface Strike {
   flashType: number
   strikeTime: EpochTimeStamp
   latitude: number
@@ -34,12 +34,30 @@ const strikeSchema: JSONSchemaType<Strike> = {
 const validate = ajv.compile(strikeSchema)
 
 export const validateLightningStrike = (json: string): Strike => {
-  const strike = JSON.parse(json)
-  const isValid = validate(strike)
+  try {
+    const strike = JSON.parse(json)
+    const isValid = validate(strike)
 
-  if (isValid) {
-    return strike
-  } else {
-    throw new Error(validate.errors?.toString())
+    if (isValid) {
+      return strike
+    } else {
+      throw new Error(validate.errors?.toString())
+    }
+  } catch (err) {
+    throw new Error(`Could not parse ${json}`)
   }
+}
+
+export const validateLightningStrikes = (json: string[]): Strike[] => {
+  return json.reduce((acc: Strike[], row) => {
+    try {
+      const strike = validateLightningStrike(row)
+      acc.push(strike)
+
+      return acc
+    } catch (err) {
+      // log error for this row
+      return acc
+    }
+  }, [])
 }
