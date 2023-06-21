@@ -34,17 +34,13 @@ const strikeSchema: JSONSchemaType<Strike> = {
 const validate = ajv.compile(strikeSchema)
 
 export const validateLightningStrike = (json: string): Strike => {
-  try {
-    const strike = JSON.parse(json)
-    const isValid = validate(strike)
+  const strike = JSON.parse(json)
+  const isValid = validate(strike)
 
-    if (isValid) {
-      return strike
-    } else {
-      throw new Error(validate.errors?.toString())
-    }
-  } catch (err) {
-    throw new Error(`Could not parse ${json}`)
+  if (isValid) {
+    return strike
+  } else {
+    throw new Error(validate.errors?.toString())
   }
 }
 
