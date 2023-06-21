@@ -6,7 +6,7 @@ describe('it should read from stdin', () => {
   let sut: ReturnType<typeof spawn>
 
   beforeEach(() => {
-    sut = spawn('ts-node', ['./src/index.ts', '-a', './assets.json'])
+    sut = spawn('ts-node', ['./src/index.ts', '-a', './integration/assets.json'])
   })
 
   afterEach(() => {
@@ -19,10 +19,14 @@ describe('it should read from stdin', () => {
 
     const stdOut: string[] = []
     sut.stdout?.on('data', data => {
-      stdOut.push(data.toString())
+      const rows = data.toString().split('\n')
+      rows.forEach((out: string) => {
+        if (out !== '') {
+          stdOut.push(out)
+        }
+      })
     })
 
-    sut.stdin?.setDefaultEncoding('utf-8')
     sut.stdin?.write(streamData)
 
     // wait for process to be called
