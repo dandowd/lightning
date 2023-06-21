@@ -8,7 +8,8 @@
     "build:start": "npm run build && npm run start",
     "build": "rm -rf dist && tsc",
     "lint": "eslint --fix src/ integration/",
-    "test": "jest"
+    "test": "jest src/",
+    "test:integration": "jest integration/"
   },
   "keywords": [],
   "author": "",

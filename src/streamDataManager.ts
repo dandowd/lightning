@@ -18,7 +18,6 @@ export class StreamDataManager {
 
   public flushDataFrame (): string[] {
     const currentFrame = this.dataFrame
-    console.log(currentFrame)
     this.dataFrame = []
 
     return currentFrame
