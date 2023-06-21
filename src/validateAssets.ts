@@ -26,12 +26,16 @@ const assetCollectionSchema: JSONSchemaType<Asset[]> = {
 const validate = ajv.compile(assetCollectionSchema)
 
 export const validateAssets = (json: string): Asset[] => {
-  const assets = JSON.parse(json)
-  const isValid = validate(assets)
+  try {
+    const assets = JSON.parse(json)
+    const isValid = validate(assets)
 
-  if (isValid) {
-    return assets
-  } else {
-    throw new Error(JSON.stringify(validate.errors))
+    if (isValid) {
+      return assets
+    } else {
+      throw new Error(JSON.stringify(validate.errors))
+    }
+  } catch (err) {
+    throw new Error(`Could not parse ${json}`)
   }
 }
