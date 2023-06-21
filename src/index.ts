@@ -3,6 +3,9 @@ import { getUniqueAssets } from './getUniqueAssets'
 import { loadAssets } from './loadAssets'
 import { validateLightningStrike } from './validateLightningStrike'
 import fs from 'fs'
+import { StreamDataManager } from './streamDataManager'
+
+const dataManager = new StreamDataManager(process.stdin)
 
 const { values: { assetsFile } } = parseArgs({
   args: process.argv,
@@ -22,17 +25,11 @@ if (assetsFile === undefined) {
 
 const assets = loadAssets(assetsFile)
 
-const dataFrame: string[] = []
 let logDump: any[] = []
 
-process.stdin.on('data', data => {
-  const rows = data.toString().split('\n')
-  dataFrame.push(...rows)
-}).on('error', error => {
-  console.log(error)
-})
-
 const processData = (): void => {
+  const dataFrame = dataManager.flushDataFrame()
+
   while (dataFrame.length > 0) {
     const row = dataFrame.pop()
 
