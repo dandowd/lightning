@@ -21,28 +21,35 @@ if (assetsFile === undefined) {
 
 const assets = loadAssets(assetsFile)
 
-const dataToBeProcessed: string[] = []
+let dataFrame: string[] = []
 
 process.stdin.on('data', data => {
-  dataToBeProcessed.push(data.toString())
+  dataFrame.push(data.toString())
 }).on('error', error => {
   console.log(error)
 })
 
 const processData = (): void => {
+  const dataToBeProcessed = dataFrame
+  dataFrame = []
+
   while (dataToBeProcessed.length > 0) {
-    const row = dataToBeProcessed.pop()
+    try {
+      const row = dataToBeProcessed.pop()
 
-    if (row === undefined) {
-      continue
-    }
+      if (row === undefined) {
+        continue
+      }
 
-    const strike = validateLightningStrike(row)
+      const strike = validateLightningStrike(row)
 
-    const struckAsset = getUniqueAssets(strike, assets)
+      const struckAsset = getUniqueAssets(strike, assets)
 
-    if (struckAsset !== undefined) {
-      console.log(`\nlightning alert for ${struckAsset.assetOwner}:${struckAsset.assetName}\n`)
+      if (struckAsset !== undefined) {
+        console.log(`\nlightning alert for ${struckAsset.assetOwner}:${struckAsset.assetName}`)
+      }
+    } catch (err) {
+      // log error
     }
   }
 }
