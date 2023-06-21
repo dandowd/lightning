@@ -1,8 +1,7 @@
 import { parseArgs } from 'node:util'
-import fs from 'fs'
-import { type Asset, validateAssets } from './validateAssets'
-import { validateLightningStrike } from './validateLightningStrike'
-import { getQuadKey } from './mapTools'
+import { getUniqueAssets } from './getUniqueAssets'
+import { loadAssets } from './loadAssets'
+import { validateLightningStrikes } from './validateLightningStrike'
 
 const { values: { assetsFile } } = parseArgs({
   args: process.argv,
@@ -20,26 +19,17 @@ if (assetsFile === undefined) {
   process.exit()
 }
 
-const json = fs.readFileSync(assetsFile)
-const validAssets = validateAssets(json.toString())
-
-const assets = validAssets.reduce((acc: Record<string, Asset>, asset) => {
-  acc[asset.quadKey] = asset
-
-  return acc
-}, {})
+const assets = loadAssets(assetsFile)
 
 process.stdin.on('data', data => {
-  const strike = validateLightningStrike(data.toString())
-  const strikeQuadKey = getQuadKey({ lat: strike.latitude, lng: strike.longitude }, 12)
+  const rows = data.toString().split('\n')
+  const strikes = validateLightningStrikes(rows)
 
-  const asset = assets[strikeQuadKey]
+  const struckAssets = getUniqueAssets(strikes, assets)
 
-  if (asset === undefined) {
-    throw new Error(`Asset not found for quadkey: ${strikeQuadKey}`)
-  } else {
-    process.stdout.write(`lightning alert for ${asset.assetOwner}: ${asset.assetName}`)
-  }
+  struckAssets.forEach((asset) => {
+    process.stdout.write(`lightning alert for ${asset.assetOwner}:${asset.assetName}\n`)
+  })
 }).on('error', error => {
   console.log(error)
 })
