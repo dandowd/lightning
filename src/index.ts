@@ -5,8 +5,6 @@ import { validateLightningStrike } from './validateLightningStrike'
 import fs from 'fs'
 import { StreamDataManager } from './streamDataManager'
 
-const dataManager = new StreamDataManager()
-
 const { values: { assetsFile } } = parseArgs({
   args: process.argv,
   allowPositionals: true,
@@ -24,13 +22,20 @@ if (assetsFile === undefined) {
 }
 
 const assets = loadAssets(assetsFile)
-
-let logDump: any[] = []
+let logs: any[] = []
+const dataManager = new StreamDataManager()
 
 process.stdin.on('data', data => {
-  dataManager.ingest(data)
+  try {
+    dataManager.ingest(data)
+    const frame = dataManager.flushFrame()
 
-  processData(dataManager.flushFrame())
+    processData(frame)
+  } catch (err) {
+    if (err instanceof Error) {
+      logs.push({ err: err.message })
+    }
+  }
 })
 
 const processData = (frame: string[]): void => {
@@ -51,17 +56,17 @@ const processData = (frame: string[]): void => {
       }
     } catch (err) {
       if (err instanceof Error) {
-        logDump.push({ row, err: err.message })
+        logs.push({ row, err: err.message })
       } else {
-        logDump.push({ row, err: 'unknown error' })
+        logs.push({ row, err: 'unknown error' })
       }
     }
   }
 }
 
 const dumpLogs = (): void => {
-  const dump = logDump
-  logDump = []
+  const dump = logs
+  logs = []
 
   fs.appendFile('./log-dump', JSON.stringify(dump, null, 2), err => {
     if (err !== null) {

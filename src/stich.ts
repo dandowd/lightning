@@ -8,7 +8,7 @@ export class StreamStitch {
       try {
         JSON.parse(newStart)
       } catch (err) {
-        // log error stating that we should be able to stitch but can't
+        throw new Error(`Unable to stitch ${newStart}`)
       }
 
       rows[0] = newStart
