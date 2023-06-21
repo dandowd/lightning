@@ -16,7 +16,7 @@ export class StreamDataManager {
     this.dataFrame.push(...rows)
   }
 
-  public flushDataFrame (): string[] {
+  public flushFrame (): string[] {
     const currentFrame = this.dataFrame
     this.dataFrame = []
 
