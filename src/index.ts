@@ -28,7 +28,7 @@ const assets = loadAssets(assetsFile)
 let logDump: any[] = []
 
 const processData = (): void => {
-  const dataFrame = dataManager.flushDataFrame()
+  const dataFrame = dataManager.flushFrame()
 
   while (dataFrame.length > 0) {
     const row = dataFrame.pop()
@@ -46,7 +46,6 @@ const processData = (): void => {
         console.log(`\nlightning alert for ${struckAsset.assetOwner}:${struckAsset.assetName}`)
       }
     } catch (err) {
-      // log error
       if (err instanceof Error) {
         logDump.push({ row, err: err.message })
       } else {
