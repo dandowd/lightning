@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/index.js -a assets.json",
+    "start": "node dist/src/index.js -a assets.json",
     "build:start": "npm run build && npm run start",
     "build": "rm -rf dist && tsc",
     "lint": "eslint --fix src/ integration/",
