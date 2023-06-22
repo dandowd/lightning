@@ -34,6 +34,8 @@ process.stdin.on('data', data => {
   } catch (err) {
     if (err instanceof Error) {
       logs.push({ err: err.message })
+    } else {
+      logs.push(err)
     }
   }
 })
@@ -58,7 +60,7 @@ const processData = (frame: string[]): void => {
       if (err instanceof Error) {
         logs.push({ row, err: err.message })
       } else {
-        logs.push({ row, err: 'unknown error' })
+        logs.push({ row, err })
       }
     }
   }
