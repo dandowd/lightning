@@ -1,9 +1,9 @@
 import { parseArgs } from 'node:util'
-import { getUniqueAssets } from './getUniqueAssets'
 import { loadAssets } from './loadAssets'
 import { validateLightningStrike } from './validateLightningStrike'
 import fs from 'fs'
 import { StreamDataManager } from './streamDataManager'
+import { StrikeTracker } from './strikeTracker'
 
 const { values: { assetsFile } } = parseArgs({
   args: process.argv,
@@ -22,6 +22,7 @@ if (assetsFile === undefined) {
 }
 
 const assets = loadAssets(assetsFile)
+const strikeTracker = new StrikeTracker(assets)
 let logs: any[] = []
 const dataManager = new StreamDataManager()
 
@@ -51,7 +52,7 @@ const processData = (frame: string[]): void => {
 
       const strike = validateLightningStrike(row)
 
-      const struckAsset = getUniqueAssets(strike, assets)
+      const struckAsset = strikeTracker.getUniqueStruckAssets(strike)
 
       if (struckAsset !== undefined) {
         console.log(`\nlightning alert for ${struckAsset.assetOwner}:${struckAsset.assetName}`)

@@ -1,6 +1,6 @@
-import { getUniqueAssets } from '../getUniqueAssets'
+import { StrikeTracker } from '../strikeTracker'
 
-describe('getUniqueStrikes', () => {
+describe('StrikeTracker', () => {
   it('should return assets for any unique strikes', () => {
     const strike = { flashType: 1, strikeTime: 1446760902996, latitude: 33.7412419, longitude: -96.6794229, peakAmps: 4403, reserved: '000', icHeight: 16024, receivedTime: 1446760915185, numberOfSensors: 11, multiplicity: 13 }
 
@@ -11,7 +11,9 @@ describe('getUniqueStrikes', () => {
       '023112310322': { assetName: 'McClure Ford', quadKey: '023112310322', assetOwner: '035' }
     }
 
-    expect(getUniqueAssets(strike, assets)).toEqual(
+    const tracker = new StrikeTracker(assets)
+
+    expect(tracker.getUniqueStruckAssets(strike)).toEqual(
       { assetName: 'McClure Ford', quadKey: '023112310322', assetOwner: '035' }
     )
   })
@@ -25,6 +27,8 @@ describe('getUniqueStrikes', () => {
       '023112133010': { assetName: 'Christian Glens', quadKey: '023112133010', assetOwner: '9974' }
     }
 
-    expect(getUniqueAssets(strike, assets)).toBeUndefined()
+    const tracker = new StrikeTracker(assets)
+
+    expect(tracker.getUniqueStruckAssets(strike)).toBeUndefined()
   })
 })
