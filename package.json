@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:interactive": "node dist/src/index.js -a assets.json",
-    "start:pipe": "cat ./lightning.json | node dist/src/index.js -a assets.json",
+    "start:interactive": "node dist/index.js -a assets.json",
+    "start:pipe": "cat ./lightning.json | node dist/index.js -a assets.json",
     "build:start": "npm run build && npm run start:pipe",
-    "build": "rm -rf dist && tsc",
+    "build": "rm -rf dist && tsc --project tsconfig.build.json",
     "lint": "eslint --fix src/ integration/",
     "test": "jest src/",
     "test:integration": "jest integration/"
