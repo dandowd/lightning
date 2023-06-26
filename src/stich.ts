@@ -8,6 +8,8 @@ export class StreamStitch {
       try {
         JSON.parse(newStart)
       } catch (err) {
+        this.previous = ''
+
         throw new Error(`Unable to stitch ${newStart}`)
       }
 
