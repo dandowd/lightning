@@ -43,13 +43,9 @@ process.stdin.on('data', data => {
 
 const processData = (frame: string[]): void => {
   while (frame.length > 0) {
-    const row = frame.pop()
+    const row = frame.pop() as string
 
     try {
-      if (row === undefined) {
-        continue
-      }
-
       const strike = validateLightningStrike(row)
 
       const struckAsset = strikeTracker.getUniqueStruckAssets(strike)
