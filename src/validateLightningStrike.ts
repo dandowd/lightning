@@ -43,17 +43,3 @@ export const validateLightningStrike = (json: string): Strike => {
     throw new Error(validate.errors?.toString())
   }
 }
-
-export const validateLightningStrikes = (json: string[]): Strike[] => {
-  return json.reduce((acc: Strike[], row) => {
-    try {
-      const strike = validateLightningStrike(row)
-      acc.push(strike)
-
-      return acc
-    } catch (err) {
-      // log error for this row
-      return acc
-    }
-  }, [])
-}
